@@ -102,12 +102,12 @@ try{
     let cahcedUrlCode = await GET_ASYNC(`${urlCode}`)   
     if(cahcedUrlCode) {
         let parsedUrlCode=JSON.parse(cahcedUrlCode)
-        res.redirect(parsedUrlCode.longUrl)
+        res.redirect(302, parsedUrlCode.longUrl)
     } else {
         let urlData = await urlModel.findOne({urlCode}).select({longUrl:1,shortUrl:1,urlCode:1,_id:0});
         if(!urlData) return res.status(404).send({status:false, message:"Invalid urlCode or it doesn't exists"})
         await SET_ASYNC(`${urlCode}`, JSON.stringify(urlData), "EX", 30)//expiry time 30 seconds 
-        return res.redirect(urlData.longUrl)
+        return res.redirect(302,urlData.longUrl)
     }
 }catch(error){
     return res.status(500).send({status:false, Error:error.message})  
